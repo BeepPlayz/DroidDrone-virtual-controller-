@@ -434,6 +434,14 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         }
     }
 
+    public Config getConfig(){
+        return config;
+    }
+
+    public Rc getRc(){
+        return rc;
+    }
+
     public int getControllerChannelCount(){
         return rc.getControllerChannelCount();
     }

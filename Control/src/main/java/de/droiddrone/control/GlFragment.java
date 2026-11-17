@@ -44,7 +44,9 @@ public class GlFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         RelativeLayout rlGl = view.findViewById(R.id.rlGl);
-        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT);
         glView = new GLSurfaceView(activity);
         glView.setLayoutParams(lp);
         glView.setEGLContextClientVersion(3);
@@ -54,6 +56,15 @@ public class GlFragment extends Fragment {
         glView.setPadding(0, 0, 0, 0);
         glView.setOnTouchListener(renderer.onTouchListener);
         rlGl.addView(glView);
+
+        VirtualController virtualController =
+                new VirtualController(activity.getRc(), activity.getConfig());
+        VirtualJoystickView joystickView = new VirtualJoystickView(
+                activity, virtualController, renderer.onTouchListener);
+        RelativeLayout.LayoutParams joystickParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT);
+        rlGl.addView(joystickView, joystickParams);
     }
 
     @Override
