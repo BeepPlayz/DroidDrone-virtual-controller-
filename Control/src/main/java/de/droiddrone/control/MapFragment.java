@@ -37,6 +37,8 @@ import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -52,6 +54,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap googleMap;
     private Marker homeMarker;
     private Marker droneMarker;
+    private Marker phoneGpsMarker;
+    private Circle phoneGpsAccuracyCircle;
     private Polyline polyline;
     private int threadsId;
     private boolean setMapCamera;
@@ -133,6 +137,41 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                 homeMarker.setPosition(home);
                             }
                         }
+                        if (mapData.isPhoneGpsPositionChanged()){
+                            LatLng phoneGps = mapData.getPhoneGpsPosition();
+                            float accuracy = mapData.getPhoneGpsAccuracy();
+
+                            if (phoneGps != null){
+                                if (phoneGpsMarker == null){
+                                    phoneGpsMarker = googleMap.addMarker(new MarkerOptions()
+                                            .position(phoneGps)
+                                            .title("Phone GPS")
+                                            .snippet("Accuracy: ±" + String.format(java.util.Locale.US, "%.1f", accuracy) + " m"));
+                                }else{
+                                    phoneGpsMarker.setPosition(phoneGps);
+                                    phoneGpsMarker.setSnippet("Accuracy: ±" + String.format(java.util.Locale.US, "%.1f", accuracy) + " m");
+                                }
+
+                                double radius = Math.max(1.0, accuracy);
+                                if (phoneGpsAccuracyCircle == null){
+                                    phoneGpsAccuracyCircle = googleMap.addCircle(new CircleOptions()
+                                            .center(phoneGps)
+                                            .radius(radius)
+                                            .strokeColor(Color.CYAN)
+                                            .strokeWidth(2f)
+                                            .fillColor(Color.argb(45, 0, 255, 255)));
+                                }else{
+                                    phoneGpsAccuracyCircle.setCenter(phoneGps);
+                                    phoneGpsAccuracyCircle.setRadius(radius);
+                                }
+
+                                if (droneMarker == null && setMapCamera){
+                                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(phoneGps, 15));
+                                    setMapCamera = false;
+                                }
+                            }
+                        }
+
                         if (mapData.isDronePositionChanged()){
                             LatLng drone = mapData.getDronePosition();
                             if (droneMarker == null){

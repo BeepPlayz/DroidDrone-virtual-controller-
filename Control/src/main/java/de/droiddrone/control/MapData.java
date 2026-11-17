@@ -29,6 +29,9 @@ public class MapData {
     private final static int positionsMinDist = 5;
     private LatLng homePosition;
     private LatLng dronePosition;
+    private LatLng phoneGpsPosition;
+    private float phoneGpsAccuracy;
+    private boolean phoneGpsPositionChanged;
     private final List<LatLng> dronePositions = new ArrayList<>();
     private boolean homePositionChanged;
     private boolean dronePositionChanged;
@@ -77,6 +80,25 @@ public class MapData {
                 }
             }
         }
+    }
+
+    public void setPhoneGpsPosition(double lat, double lon, float accuracy){
+        phoneGpsPosition = new LatLng(lat, lon);
+        phoneGpsAccuracy = accuracy;
+        phoneGpsPositionChanged = true;
+    }
+
+    public LatLng getPhoneGpsPosition(){
+        phoneGpsPositionChanged = false;
+        return phoneGpsPosition;
+    }
+
+    public float getPhoneGpsAccuracy(){
+        return phoneGpsAccuracy;
+    }
+
+    public boolean isPhoneGpsPositionChanged(){
+        return phoneGpsPositionChanged;
     }
 
     public LatLng getDronePosition(){
